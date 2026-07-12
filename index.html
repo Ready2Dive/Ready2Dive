@@ -10,7 +10,7 @@
  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
  <meta name="apple-mobile-web-app-title" content="Ready2Dive">
 
- <title>Ready to Dive v1.0</title>
+ <title>Ready2Dive v1.0</title>
  <style>
       /* Premium Dark UI Aesthetic Framework */
       * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -145,7 +145,7 @@
          <div class="scale-panel" id="scalePanel">
              <!-- Row 1: Calibrated Readiness Index -->
              <div class="panel-row">
-                 <span class="scale-label">Ready to Dive</span>
+                 <span class="scale-label">Ready2Dive Index</span>
                  <div class="pct-container">
                      <span class="pct-display" id="pctDisplay">100%</span>
                  </div>
@@ -170,13 +170,13 @@
              
              <!-- Row 4: Dynamic Operational Directives -->
              <div id="rec-green" class="status-desc">
-                 <span><strong class="col-g">Optimal:</strong> Normal baseline metrics. Execute standard pre-dive profiling and teammate configuration validation.</span>
+                 <span><strong class="col-g">Optimal:</strong> Normal baseline metrics. Execute standard pre-dive briefings and teammate configuration validation.</span>
              </div>
              <div id="rec-amber" class="status-desc">
-                 <span><strong class="col-a">Caution Level:</strong> Elevated tracking variables. Dynamic DCS and/or dive complexity values are elevated. Increase conservative margins, reduce complexity, utilize a dive professionsl, and/or extend safety stops.</span>
+                 <span><strong class="col-a">Caution Level:</strong> Increased risk. Dynamic DCS and/or dive complexity values are elevated. Consider increasing conservative margins, reduce complexity, utilize a dive professionsl, and/or extend safety stops.</span>
              </div>
              <div id="rec-red" class="status-desc">
-                 <span><strong class="col-r">Critical Boundary:</strong> Extreme accumulation (Risk Index ≥ 21). Critical safety variables exceeded. Consider changing the profile or diving another time.</span>
+                 <span><strong class="col-r">Critical Boundary:</strong> High accumulation (Risk Index ≥ 21). Critical safety variables exceeded. Consider changing the profile or diving another time.</span>
              </div>
          </div>
      </div>
@@ -197,38 +197,38 @@
                  
                  <input type="radio" name="fatigue" id="f_a" class="engine-toggle" data-pts="4" data-pct="-12">
                  <label for="f_a" class="full-btn-label">
-                     <span class="btn-headline col-a">Sleep Debt / Acute Jet Lag (+4)</span>
-                     <span class="btn-subtext">5-7 hours of sleep, or <strong>crossed 1-3 time zones within the past 24 hours</strong>.</span>
+                     <span class="btn-headline col-a">Sleep Deficit / Acute Jet Lag (+4)</span>
+                     <span class="btn-subtext">5-7 hours of sleep, or <strong>changed 1-3 time zones within the past 24 hours</strong>. Recommend increasing conservatism.</span>
                  </label>
                  
                  <input type="radio" name="fatigue" id="f_r" class="engine-toggle" data-pts="7" data-pct="-24">
                  <label for="f_r" class="full-btn-label">
-                     <span class="btn-headline col-r">Severe Sleep Deficit / Acute Long-Haul (+7)</span>
-                     <span class="btn-subtext">Less than 5 hours of sleep, or <strong>crossed 4+ time zones within the past 24 hours</strong>.</span>
+                     <span class="btn-headline col-r">High Sleep Deficit / Significant Acute Jet Lag (+7).</span>
+                     <span class="btn-subtext">Less than 5 hours of sleep, or <strong>crossed 4+ time zones within the past 24 hours</strong>. Recommend increasing conservatism.</span>
                  </label>
              </div>
          </div>
 
          <!-- Parameter 2: Hydration & Physical Strain Recovery -->
          <div>
-             <div class="factor-group-title">2. Hydration & Physical Strain Recovery <span style="font-size:10px; color:#ff9f0a; font-weight:bold;">[DCS WEIGHTED - AUTO AMBER]</span></div>
+             <div class="factor-group-title">2. Hydration & Physical Fatigue <span style="font-size:10px; color:#ff9f0a; font-weight:bold;">[DCS WEIGHTED - AUTO AMBER]</span></div>
              <div class="button-stack">
                  <input type="radio" name="physical" id="p_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
                  <label for="p_g" class="full-btn-label">
                      <span class="btn-headline col-g">Optimal Homeostasis (+1)</span>
-                     <span class="btn-subtext">Fully hydrated. Baseline physical recovery metrics completely normal.</span>
+                     <span class="btn-subtext">Fully hydrated. Maintaining chronic fitness levels.</span>
                  </label>
                  
                  <input type="radio" name="physical" id="p_a" class="engine-toggle" data-pts="4" data-pct="-12">
                  <label for="p_a" class="full-btn-label">
-                     <span class="btn-headline col-a">Mild Depletion / Training Load Strain (+4)</span>
-                     <span class="btn-subtext">Sub-optimal hydration status. Musculoskeletal system tracking recent training spikes.</span>
+                     <span class="btn-headline col-a">Mild Depletion / Recent moderate increase in training volume/intensity. (+4)</span>
+                     <span class="btn-subtext">Sub-optimal hydration status. Recent significant increase in training volume/intensity. Recommend increasing conservatism.</span>
                  </label>
                  
                  <input type="radio" name="physical" id="p_r" class="engine-toggle" data-pts="7" data-pct="-24">
                  <label for="p_r" class="full-btn-label">
                      <span class="btn-headline col-r">Severe Deficit / Systemic Overstrain (+7)</span>
-                     <span class="btn-subtext">Marked fluid deficit or active hangover tracking. Severe tissue exhaustion or cramping.</span>
+                     <span class="btn-subtext">Marked fluid deficit or active hangover symptoms. Severe tissue exhaustion or cramping. Recommend re-evaluating dive.</span>
                  </label>
              </div>
          </div>
@@ -246,13 +246,13 @@
                  <input type="radio" name="psych" id="ps_a" class="engine-toggle" data-pts="3" data-pct="-8">
                  <label for="ps_a" class="full-btn-label">
                      <span class="btn-headline col-a">Divided Focus (+3)</span>
-                     <span class="btn-subtext">Moderate background stress or task loading. Integrating new configuration components.</span>
+                     <span class="btn-subtext">Moderate background stress or task loading. Integrating new configuration components. Take it slow; recommend using checklist.</span>
                  </label>
                  
                  <input type="radio" name="psych" id="ps_r" class="engine-toggle" data-pts="5" data-pct="-16">
                  <label for="ps_r" class="full-btn-label">
                      <span class="btn-headline col-r">High Anxiety / Heavy Loading (+5)</span>
-                     <span class="btn-subtext">Significant underlying anxiety, severe task load pressure, or peer performance pressure.</span>
+                     <span class="btn-subtext">Significant underlying anxiety, severe task load pressure, or peer performance pressure. Recommend discuss with buddy or dive pro</span>
                  </label>
              </div>
              <input type="checkbox" id="mit_ps" class="mit-checkbox">
@@ -275,13 +275,13 @@
                  <input type="radio" name="currency" id="c_a" class="engine-toggle" data-pts="3" data-pct="-8">
                  <label for="c_a" class="full-btn-label">
                      <span class="btn-headline col-a">Lapsed Interval (+3)</span>
-                     <span class="btn-subtext">3 to 6 month surface interval.</span>
+                     <span class="btn-subtext">3 to 6 month surface interval. Take it slow; checklist recommended.</span>
                  </label>
                  
                  <input type="radio" name="currency" id="c_r" class="engine-toggle" data-pts="5" data-pct="-16">
                  <label for="c_r" class="full-btn-label">
                      <span class="btn-headline col-r">Inactive Status (+5)</span>
-                     <span class="btn-subtext">Exceeding 6+ month surface interval. Refresher or direct check-dive highly recommended.</span>
+                     <span class="btn-subtext">Exceeding 6 month surface interval. Refresher or direct check-dive highly recommended.</span>
                  </label>
              </div>
              <input type="checkbox" id="mit_c" class="mit-checkbox">
@@ -310,7 +310,7 @@
                  <input type="radio" name="env" id="e_r" class="engine-toggle" data-pts="5" data-pct="-16">
                  <label for="e_r" class="full-btn-label">
                      <span class="btn-headline col-r">Severe Conditions (+5)</span>
-                     <span class="btn-subtext">Blackout/overhead environments, extreme currents, temperatures below 60°F.</span>
+                     <span class="btn-subtext">Blackout/overhead environments, extreme currents, temperatures below 60°F. Recommend increasing conservatism (gas reserves, turn time) and decreasing NDL/Grdiant Factors/Ratio Deco plan.</span>
                  </label>
              </div>
              <input type="checkbox" id="mit_e" class="mit-checkbox">
@@ -327,7 +327,7 @@
                  <input type="radio" name="profile" id="pr_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
                  <label for="pr_g" class="full-btn-label">
                      <span class="btn-headline col-g">Single Basic Profile (+1)</span>
-                     <span class="btn-subtext">Shallow multi-level profile tracking well within no-decompression limits.</span>
+                     <span class="btn-subtext">Shallow profile well within no-decompression/min-deco limits.</span>
                  </label>
                  
                  <input type="radio" name="profile" id="pr_a" class="engine-toggle" data-pts="3" data-pct="-8">
@@ -339,7 +339,7 @@
                  <input type="radio" name="profile" id="pr_r" class="engine-toggle" data-pts="5" data-pct="-16">
                  <label for="pr_r" class="full-btn-label">
                      <span class="btn-headline col-r">Accelerated Tech / Multi-Repetitive Overload (+5)</span>
-                     <span class="btn-subtext">Required deco tracking, mix management, or multiple repetitive profiles back-to-back.</span>
+                     <span class="btn-subtext">Required deco obligation planned /gas management required (Tech), or multiple repetitive profiles back-to-back (Rec or Tech).</span>
                  </label>
              </div>
              <input type="checkbox" id="mit_pr" class="mit-checkbox">
@@ -360,7 +360,7 @@
              </summary>
              <div class="disc-content">
                  <p><strong>Operational Margin Index (OMI) Tracking:</strong><br>
-                 The slider gauge maps your real-time profile safety baseline. A perfect score places the alignment pin on the far right (Max Margin). As cumulative profile risks mount, the engine pushes the pin to the right across the spectrum toward Critical Risk. The ready to dive percentage is inversely proportional to the accumulated risk score.</p>
+                 The slider gauge maps your real-time profile safety baseline. A perfect score places the alignment pin on the far left (Max Safety Margin). As cumulative profile risks mount, the engine pushes the pin to the right across the spectrum toward Critical Risk. The ready to dive percentage is inversely proportional to the accumulated risk score.</p>
                  <p><strong>Risk Threshold Rules (6–34 Max):</strong></p>
                  <ul class="bullet-list">
                      <li><strong>GREEN Status (6–9 Points):</strong> Optimal track. High operational safety margins. Situational parameters (3–6) can tolerate a single Amber selection and remain Green provided the cumulative score does not exceed 9 points.</li>
