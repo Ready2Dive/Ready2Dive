@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <!-- Locks scaling to prevent mobile layout shifting and accidental double-tap zoom -->
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ 
+ <!-- Native iOS Standalone App Directives -->
+ <meta name="apple-mobile-web-app-capable" content="yes">
+ <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+ <meta name="apple-mobile-web-app-title" content="Ready2Dive">
+
+ <title>Ready to Dive v1.0</title>
+ <style>
+      /* Premium Dark UI Aesthetic Framework */
+      * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      body { background-color: #000000; color: #ffffff; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; align-items: center; }
+      
+      /* App Layout Wrapper */
+      .app-container { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 40px; }
+
+      /* Header Setup */
+      .app-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; color: #8e8e93; font-size: 13px; }
+      .header-title { font-size: 17px; font-weight: 600; color: #ffffff; text-align: center; flex-grow: 1; }
+
+      /* --- STICKY SLIDING SCALE HEADER --- */
+      .sticky-header-wrapper {
+          position: -webkit-sticky;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          background-color: rgba(0, 0, 0, 0.85);
+          -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+          padding: 10px 0 16px 0;
+          margin-bottom: -4px;
+       }
+
+      .scale-panel { background-color: #1c1c1e; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+      .panel-row { display: flex; justify-content: space-between; align-items: center; }
+      .panel-divider { height: 1px; background-color: #2c2c2e; margin: 2px 0; }
+      .scale-label { font-size: 13px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.03em; }
+      
+      .pct-container { padding: 4px 10px; border-radius: 6px; transition: all 0.2s ease; }
+      .pct-display { font-size: 26px; font-weight: 700; }
+      
+      /* Dynamic Color Spaces managed by JS Engine */
+      .state-green .pct-container { background-color: rgba(48, 209, 88, 0.1); border: 1px solid rgba(48, 209, 88, 0.2); }
+      .state-green .pct-display { color: #30d158; }
+      .state-amber .pct-container { background-color: rgba(255, 159, 10, 0.1); border: 1px solid rgba(255, 159, 10, 0.2); }
+      .state-amber .pct-display { color: #ff9f0a; }
+      .state-red .pct-container { background-color: rgba(255, 69, 58, 0.1); border: 1px solid rgba(255, 69, 58, 0.2); }
+      .state-red .pct-display { color: #ff453a; }
+
+      .score-container { display: flex; align-items: baseline; gap: 2px; }
+      .score-display { font-size: 18px; font-weight: 700; color: #ffffff; }
+      .score-total { font-size: 13px; color: #636366; font-weight: 500; }
+      
+      .slider-track-wrapper { position: relative; width: 100%; height: 16px; display: flex; align-items: center; margin-top: -2px; }
+      .gradient-bar { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(to right, #30d158 0%, #ff9f0a 60%, #ff453a 100%); }
+      .indicator-pin { position: absolute; width: 14px; height: 14px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; top: 1px; transform: translateX(-50%); transition: left 0.2s cubic-bezier(0.1, 0.8, 0.3, 1); box-shadow: 0 0 6px rgba(255,255,255,0.6); left: 0%; }
+      
+      .status-desc { font-size: 13px; color: #8e8e93; line-height: 1.4; display: none; }
+      .col-g { color: #30d158; } .col-a { color: #ff9f0a; } .col-r { color: #ff453a; }
+
+      /* Control directive visibility via parent state */
+      .state-green #rec-green { display: flex; }
+      .state-amber #rec-amber { display: flex; }
+      .state-red #rec-red { display: flex; }
+
+      /* --- EXPANDED VERTICAL FULL BUTTON STYLES --- */
+      .section-label { font-size: 12px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 4px; }
+      .factors-grid { display: flex; flex-direction: column; gap: 14px; }
+      .factor-group-title { font-size: 15px; font-weight: 600; color: #ffffff; margin-bottom: 6px; padding-left: 2px; }
+      
+      .button-stack { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+      .full-btn-label { background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: all 0.15s ease-in-out; }
+      .btn-headline { font-size: 14px; font-weight: 600; color: #ffffff; }
+      .btn-subtext { font-size: 12px; color: #8e8e93; line-height: 1.3; }
+
+      /* Input Selection Highlights */
+      .engine-toggle:checked + .full-btn-label { border-width: 1.5px; }
+      .engine-toggle[id$="_g"]:checked + .full-btn-label { border-color: #30d158; background-color: rgba(48, 209, 88, 0.04); }
+      .engine-toggle[id$="_a"]:checked + .full-btn-label { border-color: #ff9f0a; background-color: rgba(255, 159, 10, 0.04); }
+      .engine-toggle[id$="_r"]:checked + .full-btn-label { border-color: #ff453a; background-color: rgba(255, 69, 58, 0.04); }
+
+      /* --- MITIGATION TOGGLES --- */
+      .mit-row-label { 
+          display: flex; 
+          align-items: center; 
+          justify-content: space-between; 
+          background-color: #1c1c1e; 
+          border: 1px solid rgba(48, 209, 88, 0.4); 
+          border-radius: 10px; 
+          padding: 12px 14px; 
+          margin-top: 10px; 
+          cursor: pointer;
+          user-select: none;
+          transition: all 0.15s ease-in-out;
+      }
+      .mit-text { font-size: 13px; font-weight: 600; color: #30d158; }
+      
+      .mit-checkbox:checked + .mit-row-label { 
+          background-color: #30d158; 
+          border-color: #30d158; 
+      }
+      .mit-checkbox:checked + .mit-row-label .mit-text { 
+          color: #000000; 
+      }
+      
+      .mit-status-badge::after { content: " Apply Mitigation (-1)"; font-size: 11px; font-weight: 700; opacity: 0.8; }
+      .mit-checkbox:checked + .mit-row-label .mit-status-badge::after { content: " ✓ Mitigation Applied"; }
+
+      .mit-disabled + .mit-row-label {
+          border-color: rgba(48, 209, 88, 0.2) !important;
+          background-color: #1c1c1e !important;
+          cursor: not-allowed;
+      }
+      .mit-disabled + .mit-row-label .mit-text { color: #8e8e93 !important; }
+      .mit-disabled + .mit-row-label .mit-status-badge::after { content: " (No category risk to mitigate)" !important; }
+
+      .engine-toggle, .mit-checkbox { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; z-index: -1; }
+
+      /* Disclosure Mechanics */
+      .disclosure-panel { width: 100%; background-color: #1c1c1e; border-radius: 12px; padding: 14px 16px; font-size: 12px; color: #8e8e93; }
+      summary { font-weight: 600; color: #ffffff; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; }
+      .disc-content { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+      .bullet-list { padding-left: 14px; display: flex; flex-direction: column; gap: 6px; }
+      .bullet-list li { margin-bottom: 2px; }
+ </style>
+</head>
+<body>
+
+ <div class="app-container" id="app">
+     
+     <!-- App Header Bar Layout -->
+     <div class="app-header">
+         <span>ORM Engine</span>
+         <span class="header-title">Ready to Dive v1.0</span>
+         <span></span>
+     </div>
+
+     <!-- Sticky Panel Wrapper -->
+     <div class="sticky-header-wrapper">
+         <div class="scale-panel" id="scalePanel">
+             <!-- Row 1: Calibrated Readiness Index -->
+             <div class="panel-row">
+                 <span class="scale-label">Ready to Dive</span>
+                 <div class="pct-container">
+                     <span class="pct-display" id="pctDisplay">100%</span>
+                 </div>
+             </div>
+             
+             <div class="panel-divider"></div>
+             
+             <!-- Row 2: Secondary Diagnostic Exposure Score -->
+             <div class="panel-row">
+                 <span class="scale-label" style="font-size: 11px; color: #636366;">Weighted Risk Index</span>
+                 <div class="score-container">
+                     <span class="score-display" id="scoreDisplay">6</span>
+                     <span class="score-total">/34</span>
+                 </div>
+             </div>
+             
+             <!-- Row 3: Visual Slider Tracking Line -->
+             <div class="slider-track-wrapper">
+                 <div class="gradient-bar"></div>
+                 <div class="indicator-pin" id="indicatorPin"></div>
+             </div>
+             
+             <!-- Row 4: Dynamic Operational Directives -->
+             <div id="rec-green" class="status-desc">
+                 <span><strong class="col-g">Optimal:</strong> Normal baseline metrics. Execute standard pre-dive profiling and teammate configuration validation.</span>
+             </div>
+             <div id="rec-amber" class="status-desc">
+                 <span><strong class="col-a">Caution Level:</strong> Elevated tracking variables. Dynamic DCS risk values higher. Increase conservative margins and extend safety stops.</span>
+             </div>
+             <div id="rec-red" class="status-desc">
+                 <span><strong class="col-r">Critical Boundary:</strong> Extreme accumulation (Risk Index ≥ 21). Critical safety variables exceeded. Consider changing the profile or diving another time.</span>
+             </div>
+         </div>
+     </div>
+
+     <!-- FACTOR LIST CARD PANEL GRAPHICS -->
+     <div class="section-label">Readiness Matrix Parameters</div>
+     <div class="factors-grid">
+         
+         <!-- Parameter 1: Sleep & Circadian -->
+         <div>
+             <div class="factor-group-title">1. Sleep & Circadian Disturbance <span style="font-size:10px; color:#ff9f0a; font-weight:bold;">[DCS WEIGHTED - AUTO AMBER]</span></div>
+             <div class="button-stack">
+                 <input type="radio" name="fatigue" id="f_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
+                 <label for="f_g" class="full-btn-label">
+                     <span class="btn-headline col-g">Rested Baseline (+1)</span>
+                     <span class="btn-subtext">8+ hours of sound sleep. Synchronized circadian rhythm. No recent timezone impact.</span>
+                 </label>
+                 
+                 <input type="radio" name="fatigue" id="f_a" class="engine-toggle" data-pts="4" data-pct="-12">
+                 <label for="f_a" class="full-btn-label">
+                     <span class="btn-headline col-a">Sleep Debt / Acute Jet Lag (+4)</span>
+                     <span class="btn-subtext">5-7 hours of sleep, or <strong>crossed 1-3 time zones within the past 24 hours</strong>.</span>
+                 </label>
+                 
+                 <input type="radio" name="fatigue" id="f_r" class="engine-toggle" data-pts="7" data-pct="-24">
+                 <label for="f_r" class="full-btn-label">
+                     <span class="btn-headline col-r">Severe Sleep Deficit / Acute Long-Haul (+7)</span>
+                     <span class="btn-subtext">Less than 5 hours of sleep, or <strong>crossed 4+ time zones within the past 24 hours</strong>.</span>
+                 </label>
+             </div>
+         </div>
+
+         <!-- Parameter 2: Hydration & Physical Strain Recovery -->
+         <div>
+             <div class="factor-group-title">2. Hydration & Physical Strain Recovery <span style="font-size:10px; color:#ff9f0a; font-weight:bold;">[DCS WEIGHTED - AUTO AMBER]</span></div>
+             <div class="button-stack">
+                 <input type="radio" name="physical" id="p_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
+                 <label for="p_g" class="full-btn-label">
+                     <span class="btn-headline col-g">Optimal Homeostasis (+1)</span>
+                     <span class="btn-subtext">Fully hydrated. Baseline physical recovery metrics completely normal.</span>
+                 </label>
+                 
+                 <input type="radio" name="physical" id="p_a" class="engine-toggle" data-pts="4" data-pct="-12">
+                 <label for="p_a" class="full-btn-label">
+                     <span class="btn-headline col-a">Mild Depletion / Training Load Strain (+4)</span>
+                     <span class="btn-subtext">Sub-optimal hydration status. Musculoskeletal system tracking recent training spikes.</span>
+                 </label>
+                 
+                 <input type="radio" name="physical" id="p_r" class="engine-toggle" data-pts="7" data-pct="-24">
+                 <label for="p_r" class="full-btn-label">
+                     <span class="btn-headline col-r">Severe Deficit / Systemic Overstrain (+7)</span>
+                     <span class="btn-subtext">Marked fluid deficit or active hangover tracking. Severe tissue exhaustion or cramping.</span>
+                 </label>
+             </div>
+         </div>
+
+         <!-- Parameter 3: Psych & Task Loading -->
+         <div>
+             <div class="factor-group-title">3. Stress & Task Loading</div>
+             <div class="button-stack">
+                 <input type="radio" name="psych" id="ps_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
+                 <label for="ps_g" class="full-btn-label">
+                     <span class="btn-headline col-g">Focused Mindset (+1)</span>
+                     <span class="btn-subtext">Clear focus, high comfort envelope with the planned layout, minimal exterior distractions.</span>
+                 </label>
+                 
+                 <input type="radio" name="psych" id="ps_a" class="engine-toggle" data-pts="3" data-pct="-8">
+                 <label for="ps_a" class="full-btn-label">
+                     <span class="btn-headline col-a">Divided Focus (+3)</span>
+                     <span class="btn-subtext">Moderate background stress or task loading. Integrating new configuration components.</span>
+                 </label>
+                 
+                 <input type="radio" name="psych" id="ps_r" class="engine-toggle" data-pts="5" data-pct="-16">
+                 <label for="ps_r" class="full-btn-label">
+                     <span class="btn-headline col-r">High Anxiety / Heavy Loading (+5)</span>
+                     <span class="btn-subtext">Significant underlying anxiety, severe task load pressure, or peer performance pressure.</span>
+                 </label>
+             </div>
+             <input type="checkbox" id="mit_ps" class="mit-checkbox">
+             <label for="mit_ps" class="mit-row-label">
+                 <span class="mit-text">Dive Pro Supervision / Support Applied</span>
+                 <span class="mit-text mit-status-badge"></span>
+             </label>
+         </div>
+
+         <!-- Parameter 4: Currency -->
+         <div>
+             <div class="factor-group-title">4. Currency & Recency</div>
+             <div class="button-stack">
+                 <input type="radio" name="currency" id="c_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
+                 <label for="c_g" class="full-btn-label">
+                     <span class="btn-headline col-g">Highly Current (+1)</span>
+                     <span class="btn-subtext">Logged multiple environment-specific exposures within the last 30 days. High muscle memory.</span>
+                 </label>
+                 
+                 <input type="radio" name="currency" id="c_a" class="engine-toggle" data-pts="3" data-pct="-8">
+                 <label for="c_a" class="full-btn-label">
+                     <span class="btn-headline col-a">Lapsed Interval (+3)</span>
+                     <span class="btn-subtext">3 to 6 month surface interval.</span>
+                 </label>
+                 
+                 <input type="radio" name="currency" id="c_r" class="engine-toggle" data-pts="5" data-pct="-16">
+                 <label for="c_r" class="full-btn-label">
+                     <span class="btn-headline col-r">Inactive Status (+5)</span>
+                     <span class="btn-subtext">Exceeding 6+ month surface interval. Refresher or direct check-dive highly recommended.</span>
+                 </label>
+             </div>
+             <input type="checkbox" id="mit_c" class="mit-checkbox">
+             <label for="mit_c" class="mit-row-label">
+                 <span class="mit-text">Dive Pro Supervision / Support Applied</span>
+                 <span class="mit-text mit-status-badge"></span>
+             </label>
+         </div>
+
+         <!-- Parameter 5: Environmental -->
+         <div>
+             <div class="factor-group-title">5. Environmental Dynamics</div>
+             <div class="button-stack">
+                 <input type="radio" name="env" id="e_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
+                 <label for="e_g" class="full-btn-label">
+                     <span class="btn-headline col-g">Benign Conditions (+1)</span>
+                     <span class="btn-subtext">Warm water temperature, clear visibility, flat surface, no current vector.</span>
+                 </label>
+                 
+                 <input type="radio" name="env" id="e_a" class="engine-toggle" data-pts="3" data-pct="-8">
+                 <label for="e_a" class="full-btn-label">
+                     <span class="btn-headline col-a">Challenging Metrics (+3)</span>
+                     <span class="btn-subtext">Low thermoclines, moderate currents, limited visibility, water between 60-75°F.</span>
+                 </label>
+                 
+                 <input type="radio" name="env" id="e_r" class="engine-toggle" data-pts="5" data-pct="-16">
+                 <label for="e_r" class="full-btn-label">
+                     <span class="btn-headline col-r">Severe Conditions (+5)</span>
+                     <span class="btn-subtext">Blackout/overhead environments, extreme currents, temperatures below 60°F.</span>
+                 </label>
+             </div>
+             <input type="checkbox" id="mit_e" class="mit-checkbox">
+             <label for="mit_e" class="mit-row-label">
+                 <span class="mit-text">Dive Pro Supervision / Support Applied</span>
+                 <span class="mit-text mit-status-badge"></span>
+             </label>
+         </div>
+
+         <!-- Parameter 6: Profile Complexity -->
+         <div>
+             <div class="factor-group-title">6. Profile Geometric Complexity & Repetitive Load</div>
+             <div class="button-stack">
+                 <input type="radio" name="profile" id="pr_g" class="engine-toggle" data-pts="1" data-pct="0" checked>
+                 <label for="pr_g" class="full-btn-label">
+                     <span class="btn-headline col-g">Single Basic Profile (+1)</span>
+                     <span class="btn-subtext">Shallow multi-level profile tracking well within no-decompression limits.</span>
+                 </label>
+                 
+                 <input type="radio" name="profile" id="pr_a" class="engine-toggle" data-pts="3" data-pct="-8">
+                 <label for="pr_a" class="full-btn-label">
+                     <span class="btn-headline col-a">Advanced Profile / Repetitive Exposure (+3)</span>
+                     <span class="btn-subtext">Deep limits (60-130 fsw), complex gas layouts, or a minimal surface interval.</span>
+                 </label>
+                 
+                 <input type="radio" name="profile" id="pr_r" class="engine-toggle" data-pts="5" data-pct="-16">
+                 <label for="pr_r" class="full-btn-label">
+                     <span class="btn-headline col-r">Accelerated Tech / Multi-Repetitive Overload (+5)</span>
+                     <span class="btn-subtext">Required deco tracking, mix management, or multiple repetitive profiles back-to-back.</span>
+                 </label>
+             </div>
+             <input type="checkbox" id="mit_pr" class="mit-checkbox">
+             <label for="mit_pr" class="mit-row-label">
+                 <span class="mit-text">Dive Pro Supervision / Support Applied</span>
+                 <span class="mit-text mit-status-badge"></span>
+             </label>
+         </div>
+
+     </div>
+
+     <!-- SYSTEM LOGIC ACCORDION -->
+     <div class="disclosure-panel">
+         <details>
+             <summary>
+                 <span>📊 SYSTEM LOGIC & ARCHITECTURE</span>
+                 <span>▼</span>
+             </summary>
+             <div class="disc-content">
+                 <p><strong>Operational Margin Index (OMI) Tracking:</strong><br>
+                 The slider gauge maps your real-time profile safety baseline. A perfect score places the alignment pin on the far right (Max Margin). As cumulative profile risks mount, the engine pushes the pin leftward across the spectrum toward Critical Risk. The ready to dive percentage is inversely proportional to the accumulated risk score.</p>
+                 <p><strong>Risk Threshold Rules (6–34 Max):</strong></p>
+                 <ul class="bullet-list">
+                     <li><strong>GREEN Status (6–9 Points):</strong> Optimal track. High operational safety margins. Situational parameters (3–6) can tolerate a single Amber selection and remain Green provided the cumulative score does not exceed 9 points.</li>
+                     <li><strong>AMBER Status (10–20 Points):</strong> Compromised safety margin window. Prompts added profile padding and conservative depth ceiling limits. *Note: Selecting Amber or Red in physiological parameters (1 or 2), or selecting Red in ANY category forces an automatic baseline transition to Amber regardless of total score.</li>
+                     <li><strong>RED Status (21–34 Points):</strong> Critical hazard accumulation. Safety margins severely depleted. Strongly prompts dive plan reassessment or cancellation.</li>
+                     <li><strong>Physiological Weighting (Parameters 1 & 2):</strong> Sleep & Circadian Disturbance (Category 1) and Hydration & Physical Recovery (Category 2) are heavily weighted at an accelerated scale (+4 for Amber, +7 for Red). This disproportionate value directly mirrors increased systemic vulnerability to Decompression Sickness (DCS) caused by acute exhaustion or vascular dehydration.</li>
+                 </ul>
+             </div>
+         </details>
+     </div>
+
+     <!-- LIABILITY DROPDOWN ACCORDION -->
+     <div class="disclosure-panel">
+         <details>
+             <summary>
+                 <span>⚖️ LIABILITY & SAFETY DISCLAIMER</span>
+                 <span>▼</span>
+             </summary>
+             <div class="disc-content">
+                 <p>This tool is exclusively an informational cognitive aid designed to support personal situational awareness. It is not an alternative to, nor a replacement for, formal scuba training from an accredited agency, certified dive planning tables, or real-time dive computer algorithms.</p>
+                 <p>Scuba diving entails inherent risks, including decompression sickness, barotrauma, and drowning. Individual physiological susceptibility to these risks varies daily and cannot be fully predicted by software. The user retains sole operational responsibility for their own profile decisions, safety margins, and team execution. Following these recommendations does not reduce risk to zero and it is still possible to become injured or worse. The creators and distributors of this tool assume no liability for any injury, illness, or adverse outcome resulting directly or indirectly from its application.</p>
+             </div>
+         </details>
+     </div>
+
+ </div>
+
+ <!-- Precise Calculation Engine -->
+ <script>
+     const app = document.getElementById('app');
+     const scoreDisplay = document.getElementById('scoreDisplay');
+     const pctDisplay = document.getElementById('pctDisplay');
+     const indicatorPin = document.getElementById('indicatorPin');
+     const scalePanel = document.getElementById('scalePanel');
+
+     function calculateORM() {
+         let score = 0;
+         let pctReduction = 0;
+         
+         // State tracking flags for custom hybrid rules
+         let cat1Or2Elevated = false;
+         let anyCategoryRed = false;
+
+         // 1. Calculate Base Attributes & Flag Specific Risk States
+         document.querySelectorAll('.engine-toggle:checked').forEach(radio => {
+             score += parseInt(radio.getAttribute('data-pts'));
+             pctReduction += parseInt(radio.getAttribute('data-pct'));
+             
+             // Check for physiological exceptions (Cat 1 & Cat 2)
+             if ((radio.name === 'fatigue' || radio.name === 'physical') && !radio.id.endsWith('_g')) {
+                 cat1Or2Elevated = true;
+             }
+             
+             // Check for catastrophic exceptions (Any Red selection)
+             if (radio.id.endsWith('_r')) {
+                 anyCategoryRed = true;
+             }
+         });
+
+         // 2. Evaluate and Handle Mitigation Toggles
+         const mitigations = [
+             { radioG: 'ps_g', checkbox: 'mit_ps' },
+             { radioG: 'c_g', checkbox: 'mit_c' },
+             { radioG: 'e_g', checkbox: 'mit_e' },
+             { radioG: 'pr_g', checkbox: 'mit_pr' }
+         ];
+
+         mitigations.forEach(m => {
+             const isGreen = document.getElementById(m.radioG).checked;
+             const cb = document.getElementById(m.checkbox);
+             
+             if (isGreen) {
+                 cb.checked = false;
+                 cb.classList.add('mit-disabled');
+             } else {
+                 cb.classList.remove('mit-disabled');
+                 if (cb.checked) {
+                     score -= 1;
+                     pctReduction += 4; // Offsets baseline 4% steps
+                 }
+             }
+         });
+
+         // 3. Absolute Technical Boundaries
+         let finalPct = 100 + pctReduction;
+         
+         // Hard floor checking all parameters Red
+         const allRed = ['f_r', 'p_r', 'ps_r', 'c_r', 'e_r', 'pr_r'].every(id => document.getElementById(id).checked);
+         if (allRed) {
+             finalPct = 0;
+         } else {
+             finalPct = Math.max(0, Math.min(100, finalPct));
+         }
+
+         // 4. Update Header Displays
+         scoreDisplay.textContent = score;
+         pctDisplay.textContent = finalPct + '%';
+
+         // 5. Update Needle Pin Position (Map score 6-34 onto 4%-96% scale range)
+         const pinPct = 4 + ((score - 6) / (34 - 6)) * 92;
+         indicatorPin.style.left = `${pinPct}%`;
+
+         // 6. Custom Hybrid Alert Threshold Engine
+         scalePanel.classList.remove('state-green', 'state-amber', 'state-red');
+         
+         if (score >= 21) {
+             scalePanel.classList.add('state-red');
+         } else if (score >= 10 || cat1Or2Elevated || anyCategoryRed) {
+             scalePanel.classList.add('state-amber');
+         } else {
+             scalePanel.classList.add('state-green');
+         }
+     }
+
+     // Listen globally across layout inputs
+     app.addEventListener('change', calculateORM);
+     // Initial load sync execution
+     calculateORM();
+ </script>
+
+</body>
+</html>
