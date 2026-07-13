@@ -58,7 +58,7 @@
       
       .slider-track-wrapper { position: relative; width: 100%; height: 16px; display: flex; align-items: center; margin-top: -2px; }
       .gradient-bar { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(to right, #30d158 0%, #ff9f0a 60%, #ff453a 100%); }
-      .indicator-pin { position: absolute; width: 14px; height: 14px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; top: 1px; transform: translateX(-50%); transition: left 0.2s cubic-bezier(0.1, 0.8, 0.3, 1); box-shadow: 0 0 6px rgba(255,255,255,0.6); left: 0%; }
+      .indicator-pin { position: absolute; width: 14px; height: 14px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; top: 1px; transform: translateX(-50%); transition: left [...]
       
       .status-desc { font-size: 13px; color: #8e8e93; line-height: 1.4; display: none; }
       .col-g { color: #30d158; } .col-a { color: #ff9f0a; } .col-r { color: #ff453a; }
@@ -74,7 +74,7 @@
       .factor-group-title { font-size: 15px; font-weight: 600; color: #ffffff; margin-bottom: 6px; padding-left: 2px; }
       
       .button-stack { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-      .full-btn-label { background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: all 0.15s ease-in-out; }
+      .full-btn-label { background-color: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition:[...]
       .btn-headline { font-size: 14px; font-weight: 600; color: #ffffff; }
       .btn-subtext { font-size: 12px; color: #8e8e93; line-height: 1.3; }
 
@@ -127,6 +127,8 @@
       .disc-content { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
       .bullet-list { padding-left: 14px; display: flex; flex-direction: column; gap: 6px; }
       .bullet-list li { margin-bottom: 2px; }
+      .summary-heading-logic { color: #30d158; }
+      .summary-heading-liability { color: #ff453a; }
  </style>
 </head>
 <body>
@@ -173,10 +175,10 @@
                  <span><strong class="col-g">Optimal:</strong> Normal baseline metrics. Execute standard pre-dive briefings and teammate configuration validation.</span>
              </div>
              <div id="rec-amber" class="status-desc">
-                 <span><strong class="col-a">Caution Level:</strong> Increased risk. Dynamic DCS and/or dive complexity values are elevated. Consider increasing conservative margins, reduce complexity, utilize a dive professionsl, and/or extend safety stops.</span>
+                 <span><strong class="col-a">Caution Level:</strong> Increased risk. Dynamic DCS and/or dive complexity values are elevated. Consider increasing conservative margins, reduce compl[...]
              </div>
              <div id="rec-red" class="status-desc">
-                 <span><strong class="col-r">Critical Boundary:</strong> High accumulation (Risk Index ≥ 21). Critical safety variables exceeded. Consider changing the profile or diving another time.</span>
+                 <span><strong class="col-r">Critical Boundary:</strong> High accumulation (Risk Index ≥ 21). Critical safety variables exceeded. Consider changing the profile or diving another[...]
              </div>
          </div>
      </div>
@@ -310,7 +312,7 @@
                  <input type="radio" name="env" id="e_r" class="engine-toggle" data-pts="5" data-pct="-16">
                  <label for="e_r" class="full-btn-label">
                      <span class="btn-headline col-r">Severe Conditions (+5)</span>
-                     <span class="btn-subtext">Blackout/overhead environments, extreme currents, temperatures below 60°F. Recommend increasing conservatism (gas reserves, turn time) and decreasing NDL/Grdiant Factors/Ratio Deco plan.</span>
+                     <span class="btn-subtext">Blackout/overhead environments, extreme currents, temperatures below 60°F. Recommend increasing conservatism (gas reserves, turn time) and decreasi[...]
                  </label>
              </div>
              <input type="checkbox" id="mit_e" class="mit-checkbox">
@@ -355,21 +357,21 @@
      <div class="disclosure-panel">
          <details>
              <summary>
-                 <span>📊 SYSTEM LOGIC & ARCHITECTURE (READ ME)</span>
+                 <span class="summary-heading-logic">📊 SYSTEM LOGIC & ARCHITECTURE (READ ME)</span>
                  <span>▼</span>
              </summary>
              <div class="disc-content">
                  <p><strong>Weighted Risk Index Tracking:</strong><br>
-                 The slider gauge maps your real-time profile safety baseline. A perfect score places the alignment pin on the far left (Max Safety Margin). As cumulative profile risks mount, the engine pushes the pin to the right across the spectrum toward Critical Risk. The ready to dive percentage is inversely proportional to the accumulated risk score.</p>
+                 The slider gauge maps your real-time profile safety baseline. A perfect score places the alignment pin on the far left (Max Safety Margin). As cumulative profile risks mount, the[...]
                  <p><strong>Rule of Thumb</strong><br>
-                  The diver might consider not planning a dive to exceed the percentage of the max NDL for given depth that the Ready2Dive Index displays.  For example, if the Ready2Dive Index is 68%, consider a bottom time that does not exceed 68% of the max NDL or minimum decompression time (min deco) allowed time. A user could also consider setting their GF High no higher than this percentage to ensure a dive-specific safety margin is applied in an attempt to mitigate risk.</p>
+                  The diver might consider not planning a dive to exceed the percentage of the max NDL for given depth that the Ready2Dive Index displays.  For example, if the Ready2Dive Index is[...]
               <p><strong>Risk Threshold Rules (6–34 Max):</strong></p>
                          <ul class="bullet-list">
-                     <li><strong>GREEN Status (6–9 Points):</strong> Optimal track. High operational safety margins. Situational parameters (3–6) can tolerate a single Amber selection and remain Green provided the cumulative score does not exceed 9 points.</li>
-                     <li><strong>AMBER Status (10–20 Points):</strong> Compromised safety margin window. Prompts added profile padding and conservative depth ceiling limits. *Note: Selecting Amber or Red in physiological parameters (1 or 2), or selecting Red in ANY category forces an automatic baseline transition to Amber regardless of total score.</li>
-                     <li><strong>RED Status (21–34 Points):</strong> Critical hazard accumulation. Safety margins severely depleted. Strongly prompts dive plan reassessment or cancellation.</li>
-                     <li><strong>Physiological Weighting (Parameters 1 & 2):</strong> Sleep & Circadian Disturbance (Category 1) and Hydration & Physical Recovery (Category 2) are heavily weighted at an accelerated scale (+4 for Amber, +7 for Red). This disproportionate value directly mirrors increased systemic vulnerability to Decompression Sickness (DCS) caused by acute exhaustion or vascular dehydration.</li>
-                 </ul>
+                      <li><strong>GREEN Status (6–9 Points):</strong> Optimal track. High operational safety margins. Situational parameters (3–6) can tolerate a single Amber selection and rem[...]
+                      <li><strong>AMBER Status (10–20 Points):</strong> Compromised safety margin window. Prompts added profile padding and conservative depth ceiling limits. *Note: Selecting Am[...]
+                      <li><strong>RED Status (21–34 Points):</strong> Critical hazard accumulation. Safety margins severely depleted. Strongly prompts dive plan reassessment or cancellation.</li[...]
+                      <li><strong>Physiological Weighting (Parameters 1 & 2):</strong> Sleep & Circadian Disturbance (Category 1) and Hydration & Physical Recovery (Category 2) are heavily weighte[...]
+                  </ul>
              </div>
          </details>
      </div>
@@ -378,12 +380,12 @@
      <div class="disclosure-panel">
          <details>
              <summary>
-                 <span>⚖️ LIABILITY & SAFETY DISCLAIMER</span>
+                 <span class="summary-heading-liability">⚖️ LIABILITY & SAFETY DISCLAIMER</span>
                  <span>▼</span>
              </summary>
              <div class="disc-content">
-                 <p>This tool is exclusively an informational cognitive aid designed to support personal situational awareness. It is not an alternative to, nor a replacement for, formal scuba training from an accredited agency, certified dive planning tables, or real-time dive computer algorithms.</p>
-                 <p>Scuba diving entails inherent risks, including decompression sickness, barotrauma, and drowning. Individual physiological susceptibility to these risks varies daily and cannot be fully predicted by software. The user retains sole operational responsibility for their own profile decisions, safety margins, and team execution. Following these recommendations does not reduce risk to zero and it is still possible to become injured or worse. The creators and distributors of this tool assume no liability for any injury, illness, or adverse outcome resulting directly or indirectly from its application.</p>
+                 <p>This tool is exclusively an informational cognitive aid designed to support personal situational awareness. It is not an alternative to, nor a replacement for, formal scuba tr[...]
+                 <p>Scuba diving entails inherent risks, including decompression sickness, barotrauma, and drowning. Individual physiological susceptibility to these risks varies daily and cannot[...]
              </div>
          </details>
      </div>
